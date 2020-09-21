@@ -1,12 +1,15 @@
 import torch
 import torch.autograd
+from torch import nn
+import torch.functional as F
 import math
 
 import torchvision
 from torchvision.datasets import MNIST, CIFAR10, SVHN
 from typing import Callable
 
-from models import *
+from models import DifferentiableNormalizer
+from models import *  # noqa: F401, F403
 from datasets import TwoClassMNIST
 
 
@@ -87,7 +90,7 @@ def load_dataset_model(args):
         model.cuda()
 
     if getattr(args, 'no_normalizer', False):
-        normalizer = lambda x: x
+        normalizer = lambda x: x  # noqa: E731
 
     return dataset, model, normalizer
 
@@ -95,8 +98,8 @@ def load_dataset_model(args):
 def ce_loss_with_abstain(
     logits: torch.Tensor,
     labels: torch.Tensor,
-    abstain: bool=False,
-    abstain_cost: float=0,
+    abstain: bool = False,
+    abstain_cost: float = 0,
     reduction='mean',
 ) -> torch.Tensor:
     """
@@ -122,8 +125,8 @@ def ce_loss_with_abstain(
 def calculate_base_loss(
     logits: torch.Tensor,
     labels: torch.Tensor,
-    abstain: bool=False,
-    abstain_cost: float=0,
+    abstain: bool = False,
+    abstain_cost: float = 0,
 ) -> torch.Tensor:
     """
     Calculates a loss between the given logits (output from classifier) and
@@ -217,7 +220,9 @@ def activation(x, activations=None):
         x = F.relu(x)
     else:
         raise NotImplementedError(
-            f'activation {activation.activation} not supported')  # type: ignore
+            f'activation {activation.activation} '  # type: ignore
+            'not supported',
+        )
 
     if activations is not None:
         activations.append(x)

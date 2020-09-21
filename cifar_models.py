@@ -1,5 +1,6 @@
 '''
-TAKEN FROM https://github.com/akamaster/pytorch_resnet_cifar10/blob/master/resnet.py
+TAKEN FROM
+https://github.com/akamaster/pytorch_resnet_cifar10/blob/master/resnet.py
 
 Properly implemented ResNet-s for CIFAR10 as described in paper [1].
 The implementation and structure of this file is hugely influenced by [2]
@@ -24,7 +25,6 @@ If you use this implementation in you work, please don't forget to mention the
 author, Yerlan Idelbayev.
 '''
 
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.init as init
@@ -38,7 +38,6 @@ __all__ = ['ResNet', 'resnet20', 'resnet32', 'resnet44', 'resnet56',
 
 
 def _weights_init(m):
-    classname = m.__class__.__name__
     if isinstance(m, nn.Linear) or isinstance(m, nn.Conv2d):
         try:
             init.kaiming_normal_(m.weight)
@@ -77,8 +76,10 @@ class BasicBlock(nn.Module):
         self.bn1 = nn.BatchNorm2d(planes)
         self.bn2 = nn.BatchNorm2d(planes)
 
-        self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=bias)
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, bias=bias)
+        self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=3, stride=stride,
+                               padding=1, bias=bias)
+        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=1,
+                               padding=1, bias=bias)
 
         self.dropout = dropout
 
@@ -86,16 +87,23 @@ class BasicBlock(nn.Module):
         if stride != 1 or in_planes != planes:
             if option == 'A':
                 # For CIFAR10 ResNet paper uses option A.
-                self.shortcut = LambdaLayer(lambda x:
-                                            F.pad(x[:, :, ::2, ::2], [0, 0, 0, 0, planes//4, planes//4], "constant", 0))
+                self.shortcut = LambdaLayer(
+                    lambda x: F.pad(
+                        x[:, :, ::2, ::2],
+                        [0, 0, 0, 0, planes//4, planes//4],
+                        "constant",
+                        0,
+                    ),
+                )
             elif option == 'B':
                 self.shortcut = nn.Sequential(
-                     nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
-                     nn.BatchNorm2d(self.expansion * planes)
+                    nn.Conv2d(in_planes, self.expansion * planes,
+                              kernel_size=1, stride=stride, bias=False),
+                    nn.BatchNorm2d(self.expansion * planes)
                 )
             elif option == 'wide':
-                self.shortcut = \
-                    nn.Conv2d(in_planes, planes, kernel_size=1, stride=stride, bias=True)
+                self.shortcut = nn.Conv2d(in_planes, planes, kernel_size=1,
+                                          stride=stride, bias=True)
 
     def forward(self, x):
         out = utils.activation(self.bn1(self.conv1(x)))

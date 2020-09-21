@@ -31,8 +31,12 @@ jobs:
           # Now, install dependencies.
           pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
-          pip install mypy
+          pip install mypy flake8
 
       - name: Check types
         run: mypy *.py
+        if: ${{ always() }}
+
+      - name: Run flake8
+        run: flake8
         if: ${{ always() }}

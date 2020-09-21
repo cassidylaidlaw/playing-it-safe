@@ -10,7 +10,6 @@ import builtins
 import random
 from torch import optim
 from torch import nn
-from torch.autograd import Variable
 from torch.utils.data import DataLoader
 from tensorboardX import SummaryWriter
 from collections import defaultdict
@@ -185,7 +184,8 @@ if __name__ == '__main__':
         # DETERMINE INPUTS TO RUN MODEL OVER
         inputs_to_compute.append(inputs)
 
-        first_eval_locals: DefaultDict[str, Any] = defaultdict(lambda: math.nan)
+        first_eval_locals: DefaultDict[str, Any] = \
+            defaultdict(lambda: math.nan)
         first_eval_locals.update(loss_objects)
         first_eval_locals.update(globals())
         first_eval_locals.update(builtins.__dict__)
@@ -208,8 +208,8 @@ if __name__ == '__main__':
             torch.cat([labels] * len(inputs_to_compute)),
         )
         all_grads, = torch.autograd.grad(base_loss.sum(), all_inputs,
-                                            create_graph=True,
-                                            retain_graph=True)
+                                         create_graph=True,
+                                         retain_graph=True)
         for i in range(len(inputs_to_compute)):
             sl = slice(i * len(inputs), (i + 1) * len(inputs))
             computed_logits.append(all_logits[sl])
@@ -241,14 +241,14 @@ if __name__ == '__main__':
 
         # LOGGING
         accuracy = utils.calculate_accuracy(logits, labels)
-        log_fn(f'loss/loss', loss.item())
-        log_fn(f'loss/ce', l_ce.item())
-        log_fn(f'loss/base', l_base.item())
+        log_fn('loss/loss', loss.item())
+        log_fn('loss/ce', l_ce.item())
+        log_fn('loss/base', l_base.item())
         if 'diff' in args.base_loss:
-            log_fn(f'loss/diff', l_diff.item())
-        log_fn(f'loss/grad', l_grad.item())
-        log_fn(f'loss/grad_l1', l_grad_l1.item())
-        log_fn(f'accuracy', accuracy.item())
+            log_fn('loss/diff', l_diff.item())
+        log_fn('loss/grad', l_grad.item())
+        log_fn('loss/grad_l1', l_grad_l1.item())
+        log_fn('accuracy', accuracy.item())
         if train:
             print(f'ITER {iteration:06d}',
                   f'accuracy: {accuracy.item() * 100:5.1f}%',
@@ -268,8 +268,8 @@ if __name__ == '__main__':
             # log gradient norm
             param_grads = torch.cat([param.grad.data.view(-1) for param in
                                      model.parameters()])
-            log_fn(f'param_grad_l2', param_grads.norm(p=2).item())
-            log_fn(f'param_grad_linf', param_grads.norm(p=math.inf).item())
+            log_fn('param_grad_l2', param_grads.norm(p=2).item())
+            log_fn('param_grad_linf', param_grads.norm(p=math.inf).item())
 
             # clip gradients and optimize
             nn.utils.clip_grad_value_(model.parameters(), args.clip_grad)

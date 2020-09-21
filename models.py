@@ -1,12 +1,10 @@
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-import copy
 
 import utils
 
-from cifar_models import *
+from cifar_models import *  # noqa: F401, F403
 
 
 class DifferentiableNormalizer(object):

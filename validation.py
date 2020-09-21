@@ -2,9 +2,6 @@
 from typing import List, Tuple
 import torch
 import torch.autograd
-import torch.nn.functional as F
-import random
-from collections import Counter
 
 import attacks
 

@@ -4,7 +4,6 @@ import torch
 import math
 from torch import optim
 from torch import nn
-from torch.autograd import Variable
 from torch.autograd.gradcheck import zero_gradients
 
 import utils
@@ -12,6 +11,7 @@ import utils
 
 class Attack(Protocol):
     __name__: str
+
     def __call__(
         self,
         model: nn.Module,
@@ -19,7 +19,7 @@ class Attack(Protocol):
         inputs: torch.Tensor,
         labels: torch.Tensor,
         dataset: str,
-        abstain: bool=False,
+        abstain: bool = False,
         *args,
         **kwargs,
     ) -> torch.Tensor:
@@ -32,7 +32,7 @@ def none(
     inputs: torch.Tensor,
     labels: torch.Tensor,
     dataset: str,
-    abstain: bool=False,
+    abstain: bool = False,
 ) -> torch.Tensor:
     return inputs
 
@@ -66,13 +66,13 @@ def pgd(
     inputs: torch.Tensor,
     labels: torch.Tensor,
     dataset: str,
-    abstain: bool=False,
-    lp: float=math.nan,
-    eps: float=None,
-    iters: int=PGD_ITERS,
-    initial_perturbations: torch.Tensor=None,
-    eps_iter: float=None,
-    eps_decay: float=1,
+    abstain: bool = False,
+    lp: float = math.nan,
+    eps: float = None,
+    iters: int = PGD_ITERS,
+    initial_perturbations: torch.Tensor = None,
+    eps_iter: float = None,
+    eps_decay: float = 1,
 ) -> torch.Tensor:
     if eps is None:
         eps = EPS[dataset][lp]
@@ -214,6 +214,7 @@ def pgd_abstain_interp_linf(*args, **kwargs):
     kwargs.setdefault('stop', True)
     return pgd_abstain(*args, **kwargs)
 
+
 def pgd_abstain_interp_l2(*args, **kwargs):
     kwargs['lp'] = 2
     kwargs.setdefault('iters', PGD_ITERS_VAL)
@@ -289,7 +290,8 @@ def deepfool(model, normalizer, inputs, labels, dataset, lp, eps=None,
         smallest_perturbation_updates = torch.zeros_like(perturbations[live])
 
         if target_classes.size()[1] > 1:
-            logits[live, classified_labels[live]].sum().backward(retain_graph=True)
+            logits[live, classified_labels[live]].sum().backward(
+                retain_graph=True)
             grads_correct = adv_inputs.grad.data[live].clone().detach()
 
         for k in range(target_classes.size()[1]):
@@ -513,7 +515,10 @@ def deepfool_abstain_linf(model, normalizer, inputs, labels, dataset,
             yu = (y[:, :, None] * u).sum(1)
 
             # step 5
-            A2u = A.transpose(1, 2).matmul(u) * (1 - torch.eye(A.size()[2], device=A.device))
+            A2u = (
+                A.transpose(1, 2).matmul(u)
+                * (1 - torch.eye(A.size()[2], device=A.device))
+            )
             x1 = (y[:, 0, None] -
                   yu * A[:, 0:1].matmul(A2u.sign())[:, 0]) / A[:, 0]
 
@@ -592,9 +597,9 @@ def iterated_pgd(
     loss_fn: Callable[[torch.Tensor], torch.Tensor],
     dataset: str,
     lp: float,
-    eps: Optional[float]=None,
-    iters: int=PGD_ITERS,
-    eps_iter: float=None,
+    eps: Optional[float] = None,
+    iters: int = PGD_ITERS,
+    eps_iter: float = None,
     initial_perturbations=None,
     eps_decay=1,
     inverse_eps_decay=False,

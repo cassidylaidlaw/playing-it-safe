@@ -1,0 +1,4 @@
+[flake8]
+exclude = .svn,CVS,.bzr,.hg,.git,__pycache__
+per-file-ignores =
+    blip/settings/*:F403,F405

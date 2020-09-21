@@ -3,7 +3,6 @@ import math
 from typing import Callable
 import torch
 from torch import nn
-from torch import autograd
 
 import attacks
 import random
@@ -33,7 +32,6 @@ class Loss(object):
 
     def add_input_to_compute(self, inputs):
         self.inputs_to_compute.append(inputs)
-
 
     def get_orig_logits(self):
         return self.computed_logits[0]
@@ -179,7 +177,8 @@ class AdversarialAbstainLoss(Loss):
                 adv_inputs.append(attack(
                     self.model, self.normalizer,
                     self.inputs[variant_slice], self.labels[variant_slice],
-                    self.dataset, lp=lp, eps=eps, abstain=True, **attack_kwargs,
+                    self.dataset, lp=lp, eps=eps, abstain=True,
+                    **attack_kwargs,
                 ))
             adv_inputs = torch.cat(adv_inputs)
 
