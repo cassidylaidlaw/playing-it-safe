@@ -298,8 +298,6 @@ if __name__ == '__main__':
 
         print(f'START EPOCH {epoch:04d} (lr={lr:.0e})')
         for batch_index, (inputs, labels) in enumerate(train_loader):
-            if batch_index >= 20:
-                break
             if epoch < 10 and args.optim == 'sgd':
                 lr = (iteration + 1) / (10 * len(train_loader)) * args.lr
             for param_group in optimizer.param_groups:
