@@ -20,6 +20,7 @@ def run_validation_attacks(model, normalizer, val_loader,
     if args.abstain:
         validation_attacks = [
             (attacks.none, 1),  # type: ignore
+            (attacks.pgd_linf, 1),  # type: ignore
             (attacks.pgd_abstain_sum_linf, 1),  # type: ignore
             (attacks.pgd_abstain_interp_linf, 1),  # type: ignore
             # only attack 20% of batches with DeepFool since it takes longer
