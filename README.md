@@ -56,3 +56,7 @@ To evaluate the natural and adversarial error of a trained classifier (like the 
       pgd_linf pgd_abstain_sum_linf \
       pgd_abstain_interp_linf pgd_abstain_switch_linf \
       deepfool_linf deepfool_abstain_linf
+
+## Pretrained models
+
+All models evaluated in the paper can be downloaded [here](https://people.eecs.berkeley.edu/~cassidy_laidlaw/playing-it-safe-checkpoints.zip).
